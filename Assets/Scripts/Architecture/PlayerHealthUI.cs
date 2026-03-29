@@ -6,7 +6,7 @@ public class PlayerHealthUI : MonoBehaviour, IHealthUI
 {
     [SerializeField] private Slider _healthSlider;
     [SerializeField] private TextMeshProUGUI _healthText;
-    [SerializeField] private GameObject _defeatMenu;
+    
 
     public void Initialize(int maxHealth)
     {
@@ -16,9 +16,6 @@ public class PlayerHealthUI : MonoBehaviour, IHealthUI
             _healthSlider.value = maxHealth;
         }
         UpdateHealthText(maxHealth);
-
-        if (_defeatMenu != null)
-            _defeatMenu.SetActive(false);
 
     }
 
@@ -38,13 +35,6 @@ public class PlayerHealthUI : MonoBehaviour, IHealthUI
 
     }
 
-    public void ShowDeathMenu()
-    {
-        if (_defeatMenu != null)
-        {
-            _defeatMenu.SetActive(true);
-        }
-    }
 
     private void UpdateHealthText(int health)
     {

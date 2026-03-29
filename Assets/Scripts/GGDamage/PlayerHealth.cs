@@ -120,8 +120,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void ShowDefeatMenu()
     {
         Debug.Log("[PlayerHealth] Показ меню поражения");
-        if (_healthUI != null)
-            _healthUI.ShowDeathMenu();
 
         if (_timeManager != null)
             _timeManager.StopTime();

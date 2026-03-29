@@ -26,5 +26,5 @@ public class EnemyHealthUI : MonoBehaviour, IHealthUI
             _healthSlider.gameObject.SetActive(false);
     }
 
-    public void ShowDeathMenu() { }
+    
 }
