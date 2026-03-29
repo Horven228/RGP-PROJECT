@@ -1,19 +1,33 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class DefeatMenu : MonoBehaviour
 {
+    private UIManager _uiManager;
 
-    // Метод для кнопки рестарт
+    /// <summary>
+    /// Установка UIManager (вызывается из SceneEntryPoint)
+    /// </summary>
+    public void SetUIManager(UIManager uiManager)
+    {
+        _uiManager = uiManager;
+        Debug.Log("[DefeatMenu] UIManager установлен");
+    }
+
+    /// <summary>
+    /// Перезапустить уровень (вызывается по кнопке)
+    /// </summary>
     public void RestartLevel()
     {
-        Time.timeScale = 1f;
+        Debug.Log("[DefeatMenu] Нажата кнопка Restart");
+        _uiManager?.RestartGame();
+    }
 
-        // Возвращаем блокировку курсора (при перезагрузке сцены это не обязательно,
-        // но оставим для порядка)
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    /// <summary>
+    /// Выйти в главное меню (вызывается по кнопке)
+    /// </summary>
+    public void ExitToMenu()
+    {
+        Debug.Log("[DefeatMenu] Нажата кнопка Exit to Menu");
+        _uiManager?.ExitToMenu();
     }
 }

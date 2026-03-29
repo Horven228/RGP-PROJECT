@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IPlayerController
 {
     [Header("Настройки движения")]
     [SerializeField] private float _moveSpeed = 5f;
@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Магический эффект")]
     [SerializeField] private GameObject _magicEffectPrefab;
     [SerializeField] private Transform _magicSpawnPoint;
-    [SerializeField] private float _magicCooldown = 5f; // Кулдаун магии
+    [SerializeField] private float _magicCooldown = 5f;
 
     [Header("Настройки атаки")]
     [SerializeField] private float _attackDuration = 1f;
@@ -82,20 +82,17 @@ public class PlayerController : MonoBehaviour
             _cameraHolder = GetComponentInChildren<Camera>()?.transform;
             if (_cameraHolder == null)
             {
-                Debug.LogError("CameraHolder не найден!");
+                Debug.LogError("[PlayerController] CameraHolder не найден!");
                 enabled = false;
                 return;
             }
         }
 
-        // Если точка спавна магии не назначена, используем позицию игрока
         if (_magicSpawnPoint == null)
         {
             _magicSpawnPoint = transform;
-            Debug.Log("MagicSpawnPoint не назначен, используется позиция игрока");
         }
 
-        // Находим UI кулдауна
         _magicCooldownUI = FindObjectOfType<MagicCooldownUI>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -113,7 +110,6 @@ public class PlayerController : MonoBehaviour
         HandleMagic();
         UpdateAnimations();
 
-        // Обновляем таймер кулдауна магии
         if (_magicOnCooldown)
         {
             _magicCooldownTimer -= Time.deltaTime;
@@ -215,7 +211,6 @@ public class PlayerController : MonoBehaviour
     private void HandleRun()
     {
         if (_runAction == null) return;
-
         if (_isAttacking) return;
 
         _isRunning = _runAction.IsPressed() && _currentMoveInput.magnitude > 0.1f;
@@ -240,24 +235,19 @@ public class PlayerController : MonoBehaviour
 
         if (_magicAction.WasPressedThisFrame() && !_magicOnCooldown)
         {
-            // Используем точку спавна для создания магии
             Vector3 spawnPosition = _magicSpawnPoint != null ? _magicSpawnPoint.position : transform.position;
             Quaternion spawnRotation = _magicSpawnPoint != null ? _magicSpawnPoint.rotation : transform.rotation;
 
-            // Создаем магический снаряд
             GameObject magic = Instantiate(_magicEffectPrefab, spawnPosition, spawnRotation);
 
-            // Запускаем кулдаун
             _magicOnCooldown = true;
             _magicCooldownTimer = _magicCooldown;
 
-            // Обновляем UI (меняем картинку)
             if (_magicCooldownUI != null)
             {
                 _magicCooldownUI.TriggerCooldown();
             }
 
-            // Уничтожаем снаряд через время (на случай если никуда не попадет)
             Destroy(magic, 5f);
         }
     }
@@ -281,15 +271,34 @@ public class PlayerController : MonoBehaviour
         _animator.SetBool(IsRunningHash, isRunning);
     }
 
+    public void DisableControl()
+    {
+        this.enabled = false;
+        if (_playerInput != null)
+            _playerInput.enabled = false;
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Debug.Log("[PlayerController] Управление отключено");
+    }
+
+    public void EnableControl()
+    {
+        this.enabled = true;
+        if (_playerInput != null)
+            _playerInput.enabled = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Debug.Log("[PlayerController] Управление включено");
+    }
+
     private void OnEnable()
     {
         if (_playerInput != null)
         {
             _playerInput.ActivateInput();
         }
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     private void OnDisable()
@@ -298,8 +307,5 @@ public class PlayerController : MonoBehaviour
         {
             _playerInput.DeactivateInput();
         }
-
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
     }
 }

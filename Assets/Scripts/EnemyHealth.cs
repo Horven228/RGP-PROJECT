@@ -1,9 +1,9 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 public class EnemyHealth : MonoBehaviour, IDamageable
 {
-    public int maxHealth = 100;
+    [Header("Здоровье")]
+    [SerializeField] private int maxHealth = 100;
     private int currentHealth;
 
     [Header("Настройки урона")]
@@ -14,14 +14,13 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [Header("Эффекты")]
     [SerializeField] private GameObject _damageEffectPrefab;
 
-    [Header("Шкала здоровья")]
-    [SerializeField] private Slider _healthSlider;
-
     [Header("Настройки смерти")]
-    [SerializeField] private Animator _enemyAnimator;
-    [SerializeField] private string _deathBoolName = "Death";
     [SerializeField] private float _destroyDelay = 2f;
     [SerializeField] private Collider _hitCollider;
+
+    // Зависимости через интерфейсы
+    private IHealthUI _healthUI;
+    private IDeathAnimator _deathAnimator;
 
     private float lastDamageTime;
     private bool isDead = false;
@@ -34,21 +33,29 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         currentHealth = maxHealth;
 
-        if (_healthSlider != null)
-        {
-            _healthSlider.maxValue = maxHealth;
-            _healthSlider.value = currentHealth;
-        }
+        // Инициализируем зависимости
+        InitializeDependencies();
 
-        if (_enemyAnimator == null)
-        {
-            _enemyAnimator = GetComponent<Animator>();
-        }
+        // Инициализируем UI отдельно
+        var enemyHealthUI = _healthUI as EnemyHealthUI;
+        if (enemyHealthUI != null)
+            enemyHealthUI.Initialize(maxHealth);
+    }
+
+    private void InitializeDependencies()
+    {
+        // Ищем UI на враге
+        _healthUI = GetComponent<IHealthUI>();
+        if (_healthUI == null)
+            _healthUI = GetComponentInChildren<IHealthUI>();
+
+        // Ищем аниматор смерти
+        _deathAnimator = GetComponent<IDeathAnimator>();
+        if (_deathAnimator == null)
+            _deathAnimator = GetComponentInChildren<IDeathAnimator>();
 
         if (_hitCollider == null)
-        {
             _hitCollider = GetComponent<Collider>();
-        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -58,15 +65,9 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (!other.CompareTag(weaponTag)) return;
 
         Animator playerAnimator = other.GetComponentInParent<Animator>();
-
-        if (playerAnimator == null)
-        {
-            Debug.LogWarning("Не найден Animator на игроке");
-            return;
-        }
+        if (playerAnimator == null) return;
 
         bool isAttacking = playerAnimator.GetBool("IsAttacking");
-
         if (!isAttacking) return;
 
         TakeDamage(damageAmount);
@@ -79,18 +80,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         currentHealth -= damage;
 
-        if (_healthSlider != null)
-        {
-            _healthSlider.value = currentHealth;
-        }
+        if (_healthUI != null)
+            _healthUI.UpdateHealth(currentHealth, maxHealth);
 
         if (_damageEffectPrefab != null)
         {
             GameObject effect = Instantiate(_damageEffectPrefab, transform.position, Quaternion.identity);
             Destroy(effect, 2f);
         }
-
-        Debug.Log($"Враг получил урон. Осталось здоровья: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -103,22 +100,14 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (isDead) return;
         isDead = true;
 
-        Debug.Log("Враг умер!");
-
         if (_hitCollider != null)
-        {
             _hitCollider.enabled = false;
-        }
 
-        if (_healthSlider != null)
-        {
-            _healthSlider.gameObject.SetActive(false);
-        }
+        if (_healthUI != null)
+            _healthUI.HideHealthBar();
 
-        if (_enemyAnimator != null && !string.IsNullOrEmpty(_deathBoolName))
-        {
-            _enemyAnimator.SetBool(_deathBoolName, true);
-        }
+        if (_deathAnimator != null)
+            _deathAnimator.PlayDeathAnimation();
 
         Destroy(gameObject, _destroyDelay);
     }
