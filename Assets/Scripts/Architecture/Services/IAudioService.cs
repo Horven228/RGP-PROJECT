@@ -1,5 +1,5 @@
 /// <summary>
-/// Абстракция аудио сервиса
+/// Абстракция для управления звуком
 /// </summary>
 public interface IAudioService
 {
