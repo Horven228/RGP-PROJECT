@@ -77,7 +77,7 @@ public class SaveLoadInteractor
         }
 
         _repository.Save(data);
-        Debug.Log($"Игра сохранена. Кулдаун магии: {(data.player.isMagicOnCooldown ? data.player.magicCooldownRemaining + " сек" : "готов")}");
+
     }
 
     public void LoadGame(PlayerController player, PlayerHealth pHealth)
@@ -121,6 +121,6 @@ public class SaveLoadInteractor
             }
         }
 
-        Debug.Log($"Игра загружена. Кулдаун магии: {(data.player.isMagicOnCooldown ? data.player.magicCooldownRemaining + " сек осталось" : "готов")}");
+
     }
 }
