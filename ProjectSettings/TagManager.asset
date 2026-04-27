@@ -11,6 +11,7 @@ TagManager:
   - EnemyWeapon
   - Points2
   - Points3
+  - Points6
   layers:
   - Default
   - TransparentFX
