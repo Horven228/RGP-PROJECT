@@ -29,9 +29,6 @@ public abstract class EnemyState
         _animator.SetBool("IsPatroling", false);
         _animator.SetBool("IsChasing", false);
         _animator.SetBool("IsAttacking", false);
-
-        // Используем Try-Catch или проверку параметров, 
-        // если у мага нет параметра IsStrongAttacking
         _animator.SetBool("IsStrongAttacking", false);
     }
 }
