@@ -45,10 +45,10 @@ public class BossWizardStateMachine : MageStateMachine
     {
         base.Start();
 
-        // ✅ Босс всегда начинает с 1 фазы
+        // Босс всегда начинает с 1 фазы
         _isPhase2 = false;
 
-        // ✅ Выбираем рандомное визуальное оружие при спавне (50% / 50%)
+        //  Выбираем рандомное визуальное оружие при спавне (50% / 50%)
         ChooseRandomWeaponVisual();
 
         // Выбираем случайную стихию
@@ -138,22 +138,22 @@ public class BossWizardStateMachine : MageStateMachine
         if (_staffPhase1 == null || _staffPhase2 == null) return;
 
         // Логика смены оружия:
-        // - В 1 фазе: показываем выбранное при спавне оружие
-        // - Во 2 фазе: показываем ПРОТИВОПОЛОЖНОЕ оружие
+        // в 1 фазе: показываем выбранное при спавне оружие
+        // во 2 фазе: показываем другое оружие
 
         if (_isPhase2)
         {
             // 2 фаза: показываем противоположное оружие
             if (_startedWithPhase2)
             {
-                // Спавнился с Phase2 → во 2 фазе показываем Phase1
+                // Спавнился с Phase2 - во 2 фазе показываем Phase1
                 _staffPhase1.SetActive(true);
                 _staffPhase2.SetActive(false);
                 Debug.Log("[BossWizard] 2 фаза: показываем StaffPhase1");
             }
             else
             {
-                // Спавнился с Phase1 → во 2 фазе показываем Phase2
+                // Спавнился с Phase1 - во 2 фазе показываем Phase2
                 _staffPhase1.SetActive(false);
                 _staffPhase2.SetActive(true);
                 Debug.Log("[BossWizard] 2 фаза: показываем StaffPhase2");
@@ -183,8 +183,8 @@ public class BossWizardStateMachine : MageStateMachine
     private bool IsUsingStaffPhase1()
     {
         // Phase1 оружие активно если:
-        // - В 1 фазе и спавнился с Phase1
-        // - ИЛИ во 2 фазе и спавнился с Phase2 (тогда поменяли на Phase1)
+        // в 1 фазе и спавнился с Phase1
+        // во 2 фазе и спавнился с Phase2 (тогда поменяли на Phase1)
         return (!_isPhase2 && !_startedWithPhase2) || (_isPhase2 && _startedWithPhase2);
     }
 
@@ -216,7 +216,7 @@ public class BossWizardStateMachine : MageStateMachine
         {
             GameObject projectile = Instantiate(attackData.normalProjectile, _singleSpawnPoint.position, _singleSpawnPoint.rotation);
 
-            // ✅ Определяем, какой эффект использовать (в зависимости от оружия)
+            // Определяем, какой эффект использовать (в зависимости от оружия)
             bool usingStaffPhase1 = IsUsingStaffPhase1();
             GameObject hitEffect = usingStaffPhase1 ? attackData.hitEffect_StaffPhase1 : attackData.hitEffect_StaffPhase2;
 
@@ -250,7 +250,7 @@ public class BossWizardStateMachine : MageStateMachine
                 {
                     GameObject projectile = Instantiate(attackData.strongProjectile, spawnPoint.position, spawnPoint.rotation);
 
-                    // ✅ Определяем, какой эффект использовать (в зависимости от оружия)
+                    // Определяем, какой эффект использовать (в зависимости от оружия)
                     bool usingStaffPhase1 = IsUsingStaffPhase1();
                     GameObject hitEffect = usingStaffPhase1 ? attackData.hitEffect_StaffPhase1 : attackData.hitEffect_StaffPhase2;
 
