@@ -13,7 +13,7 @@ public class BossSpawnerByScore : MonoBehaviour
 
     private bool _bossSpawned = false;
     private bool _isLoading = false;
-    private int _lastCheckedScore = 0;  // ← ДОБАВИТЬ: для отслеживания изменения очков
+    private int _lastCheckedScore = 0;  // для отслеживания изменения очков
 
     private void Start()
     {
@@ -76,7 +76,7 @@ public class BossSpawnerByScore : MonoBehaviour
             return;
         }
 
-        // ✅ НОВАЯ ПРОВЕРКА: если очки достигнуты ИЛИ превышены
+        // ПРОВЕРКА: если очки достигнуты ИЛИ превышены
         if (currentScore >= _requiredScore)
         {
             Debug.Log($"[BossSpawner] Условие выполнено! currentScore={currentScore} >= {_requiredScore}");
@@ -98,7 +98,7 @@ public class BossSpawnerByScore : MonoBehaviour
             return;
         }
 
-        // ✅ ДОПОЛНИТЕЛЬНАЯ ПРОВЕРКА: если босс уже существует в сцене
+        //  ПРОВЕРКА: если босс уже существует в сцене
         GameObject existingBoss = GameObject.Find("WizardBoss");
         if (existingBoss != null)
         {
