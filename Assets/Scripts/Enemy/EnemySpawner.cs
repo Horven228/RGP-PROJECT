@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private bool _spawnOnStart = true;
 
     [Header("Точки патруля (перетащите сюда)")]
-    [SerializeField] private List<Transform> _patrolPoints; // Сюда кидаете точки
+    [SerializeField] private List<Transform> _patrolPoints;
 
     private float _nextSpawnTime;
     private List<GameObject> _activeEnemies = new List<GameObject>();
