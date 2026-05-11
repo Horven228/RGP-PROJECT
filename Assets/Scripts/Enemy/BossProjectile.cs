@@ -11,7 +11,7 @@ public class BossProjectile : MonoBehaviour
     [SerializeField] private string _targetTag = "Player";
 
     [Header("Эффекты")]
-    [SerializeField] private GameObject _hitEffectPrefab;  // fallback эффект
+    [SerializeField] private GameObject _hitEffectPrefab;
 
     private float _spawnTime;
     private GameObject _hitEffect;  // Эффект, переданный из босса
